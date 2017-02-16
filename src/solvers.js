@@ -18,16 +18,16 @@
 window.findNRooksSolution = function(n) {
   var board = new Board({n: n});
   var matrix = board.rows();
-  var counter = 0;
+  var pieceCounter = 0;
   for (var i = 0; i < matrix.length; i++) {
     var row = matrix[i];
     for (var j = 0; j < row.length; j++) {
       board.togglePiece(i, j);
-      counter++;
+      pieceCounter++;
       if (board.hasAnyRooksConflicts()) {
         board.togglePiece(i, j);
-        counter--;
-      } else if (counter === n) {
+        pieceCounter--;
+      } else if (pieceCounter === n) {
         break;
       }
     }
@@ -41,36 +41,38 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
   var board = new Board({n: n});
-  var first = 0;
 
-  var counter = 0;
+  var pieceCounter = 0;
   var firstPosition = [0, 0];
+  var firstToggled = false;
 
   for (var i = 0; i < board.rows().length; i++) {
     for (var j = 0; j < board.rows().length; j++) {
       board.togglePiece(i, j);
-      first++;
-      if (first === 1) {
+      pieceCounter++;
+
+      if (firstToggled === false) {
         firstPosition[0] = i;
         firstPosition[1] = j;
       }
-      counter++;
+      firstToggled = true; 
 
       if (board.hasAnyRooksConflicts()) {
         board.togglePiece(i, j);
-        counter--;
-      } else if (counter === n) {
+        pieceCounter--;
+      } else if (pieceCounter === n) {
+        // if ( n === 3 ) {debugger;}
         solutionCount++;
         board.togglePiece(i, j);
+        pieceCounter--;
       }
 
       if (j === board.rows()[i].length - 1 && i === board.rows().length - 1) {
         board = new Board({n: n});
-
-        first = 0;
-        firstPosition[0]++;
-        firstPosition[1]++;
+        firstToggled = false;
+        pieceCounter = 0;
         i = firstPosition[0];
+        j = firstPosition[1];        
       }
     }
   }
